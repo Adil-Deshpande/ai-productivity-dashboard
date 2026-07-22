@@ -8,8 +8,8 @@ import {
   Archive,
   Bell,
   LogOut,
-  Target,
   ChevronRight,
+  Terminal,
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
@@ -19,8 +19,8 @@ import { motion } from 'framer-motion';
 type User = { name?: string; email: string };
 
 const navItems = [
-  { icon: LayoutDashboard, label: 'My Goals', href: '/dashboard', matchPrefix: false },
-  { icon: LineChart, label: 'Progress', href: '/dashboard/progress', matchPrefix: true },
+  { icon: LayoutDashboard, label: 'Goals Board', href: '/dashboard', matchPrefix: false },
+  { icon: LineChart, label: 'Analytics', href: '/dashboard/progress', matchPrefix: true },
   { icon: StickyNote, label: 'Notes', href: '/dashboard/notes', matchPrefix: true },
   { icon: Star, label: 'Important', href: '/dashboard/important', matchPrefix: true },
   { icon: Archive, label: 'Archive', href: '/dashboard/archive', matchPrefix: true },
@@ -36,7 +36,7 @@ function getInitials(name?: string, email?: string): string {
       .toUpperCase()
       .slice(0, 2);
   }
-  return email?.slice(0, 2).toUpperCase() ?? 'U';
+  return email?.slice(0, 2).toUpperCase() ?? 'GE';
 }
 
 export function Sidebar() {
@@ -58,32 +58,33 @@ export function Sidebar() {
 
   const isActive = (item: (typeof navItems)[0]) => {
     if (item.matchPrefix) return pathname.startsWith(item.href);
-    // For "My Goals", match exact /dashboard and /dashboard/goals/*
     return pathname === item.href || pathname.startsWith('/dashboard/goals');
   };
 
   return (
-    <aside className="w-72 bg-white border-r border-gray-100/80 flex flex-col h-screen fixed left-0 top-0 overflow-y-auto shadow-sm">
+    <aside className="w-64 bg-[#F5F4EF] border-r border-[#E3E1D9] flex flex-col h-screen fixed left-0 top-0 overflow-y-auto text-[#141413]">
       {/* Brand header */}
-      <div className="px-6 py-6 border-b border-gray-100/80">
+      <div className="px-5 py-5 border-b border-[#E3E1D9]">
         <Link href="/dashboard" className="flex items-center gap-3 group">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-md shadow-indigo-500/30 group-hover:shadow-indigo-500/50 transition-shadow">
-            <Target className="w-4.5 h-4.5 text-white" strokeWidth={2.5} />
+          <div className="w-7 h-7 bg-[#141413] text-white rounded flex items-center justify-center font-mono font-bold text-xs">
+            GE
           </div>
           <div>
-            <h1 className="font-bold text-gray-900 text-base leading-tight tracking-tight">Goal Engine</h1>
-            <p className="text-xs text-gray-400 font-medium">AI Productivity</p>
+            <h1 className="font-bold text-xs tracking-tight text-[#141413]">GOAL ENGINE</h1>
+            <p className="font-mono text-[10px] text-[#73726D]">EXECUTION SYSTEM</p>
           </div>
         </Link>
       </div>
 
       {/* Nav label */}
-      <div className="px-6 pt-6 pb-2">
-        <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-widest">Navigation</p>
+      <div className="px-5 pt-5 pb-2">
+        <p className="font-mono text-[10px] font-bold text-[#73726D] uppercase tracking-widest">
+          NAVIGATION
+        </p>
       </div>
 
       {/* Nav items */}
-      <nav className="px-3 flex-1 space-y-0.5">
+      <nav className="px-3 flex-1 space-y-1">
         {navItems.map((item) => {
           const Icon = item.icon;
           const active = isActive(item);
@@ -91,65 +92,56 @@ export function Sidebar() {
             <Link
               key={item.label}
               href={item.href}
-              className={`relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group ${
+              className={`relative flex items-center gap-3 px-3 py-2 rounded-md text-xs font-semibold transition-all ${
                 active
-                  ? 'bg-indigo-50 text-indigo-700'
-                  : 'text-gray-500 hover:bg-gray-50 hover:text-gray-800'
+                  ? 'bg-[#EAE8E1] text-[#141413]'
+                  : 'text-[#52514D] hover:bg-[#EAE8E1]/60 hover:text-[#141413]'
               }`}
             >
               {active && (
                 <motion.div
-                  layoutId="active-pill"
-                  className="absolute inset-0 bg-indigo-50 rounded-xl"
+                  layoutId="active-nav-indicator"
+                  className="absolute left-0 w-1 h-4 bg-[#141413] rounded-r"
                   transition={{ type: 'spring', stiffness: 400, damping: 35 }}
                 />
               )}
-              <div className={`relative z-10 flex items-center justify-center w-7 h-7 rounded-lg transition-colors ${
-                active
-                  ? 'bg-indigo-100 text-indigo-600'
-                  : 'bg-gray-100 text-gray-400 group-hover:bg-gray-200 group-hover:text-gray-600'
-              }`}>
-                <Icon className="w-3.5 h-3.5" strokeWidth={active ? 2.5 : 2} />
-              </div>
-              <span className="relative z-10 flex-1">{item.label}</span>
-              {active && (
-                <ChevronRight className="relative z-10 w-3.5 h-3.5 text-indigo-400" />
-              )}
+              <Icon className={`w-4 h-4 ${active ? 'text-[#141413]' : 'text-[#73726D]'}`} strokeWidth={active ? 2.5 : 2} />
+              <span className="flex-1">{item.label}</span>
+              {active && <ChevronRight className="w-3.5 h-3.5 text-[#73726D]" />}
             </Link>
           );
         })}
       </nav>
 
       {/* User profile footer */}
-      <div className="p-4 border-t border-gray-100/80 mt-2">
+      <div className="p-3 border-t border-[#E3E1D9] mt-2 bg-[#FAF9F5]/40">
         {user ? (
-          <div className="flex items-center gap-3 p-2 rounded-xl hover:bg-gray-50 transition-colors group">
-            {/* Avatar */}
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-400 to-violet-500 flex items-center justify-center text-white text-xs font-bold flex-shrink-0 shadow-md shadow-indigo-500/20">
-              {getInitials(user.name, user.email)}
+          <div className="flex items-center justify-between gap-2 p-2 rounded-md hover:bg-[#EAE8E1]/60 transition-colors">
+            <div className="flex items-center gap-2.5 min-w-0">
+              <div className="w-7 h-7 rounded bg-[#141413] text-white flex items-center justify-center text-[10px] font-mono font-bold flex-shrink-0">
+                {getInitials(user.name, user.email)}
+              </div>
+              <div className="min-w-0">
+                <p className="text-xs font-bold text-[#141413] truncate leading-tight">
+                  {user.name || 'Workspace User'}
+                </p>
+                <p className="font-mono text-[10px] text-[#73726D] truncate">{user.email}</p>
+              </div>
             </div>
-            {/* Info */}
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-gray-900 truncate leading-tight">
-                {user.name || 'User'}
-              </p>
-              <p className="text-xs text-gray-400 truncate">{user.email}</p>
-            </div>
-            {/* Logout */}
             <button
               onClick={handleLogout}
               title="Sign out"
-              className="flex-shrink-0 w-7 h-7 flex items-center justify-center rounded-lg text-gray-300 hover:text-red-500 hover:bg-red-50 transition-colors"
+              className="p-1 text-[#73726D] hover:text-[#DC2626] hover:bg-red-50 rounded transition-colors"
             >
               <LogOut className="w-3.5 h-3.5" />
             </button>
           </div>
         ) : (
-          <div className="flex items-center gap-3 p-2">
-            <div className="w-9 h-9 rounded-xl bg-gray-100 shimmer flex-shrink-0" />
-            <div className="flex-1 space-y-1.5">
-              <div className="h-3 bg-gray-100 shimmer rounded-md w-3/4" />
-              <div className="h-2.5 bg-gray-100 shimmer rounded-md w-1/2" />
+          <div className="flex items-center gap-2 p-2 animate-pulse">
+            <div className="w-7 h-7 bg-[#E8E6DF] rounded" />
+            <div className="flex-1 space-y-1">
+              <div className="h-3 bg-[#E8E6DF] rounded w-3/4" />
+              <div className="h-2 bg-[#E8E6DF] rounded w-1/2" />
             </div>
           </div>
         )}

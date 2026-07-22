@@ -5,6 +5,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
+import { Cpu, ArrowRight } from 'lucide-react';
 
 type AIGeneratorDialogProps = {
   isOpen: boolean;
@@ -38,7 +39,7 @@ export function AIGeneratorDialog({ isOpen, onClose, onSuccess }: AIGeneratorDia
       onClose();
     } catch (err) {
       console.error(err);
-      setError('Something went wrong. Ensure your API key is configured correctly and try again.');
+      setError('Generation request failed. Check API key configuration or try again.');
     } finally {
       setLoading(false);
     }
@@ -46,41 +47,57 @@ export function AIGeneratorDialog({ isOpen, onClose, onSuccess }: AIGeneratorDia
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <span>✨</span> Generate Goal with AI
+      <DialogContent className="sm:max-w-lg bg-white border border-[#E8E6DF] p-6 text-[#141413]">
+        <DialogHeader className="space-y-1">
+          <div className="flex items-center gap-2 font-mono text-xs font-bold text-[#73726D] uppercase tracking-widest mb-1">
+            <Cpu className="w-4 h-4 text-[#141413]" />
+            <span>LLM DECOMPOSITION ENGINE</span>
+          </div>
+          <DialogTitle className="text-xl font-bold text-[#141413] tracking-tight">
+            Structure an Ambition
           </DialogTitle>
-          <DialogDescription>
-            Describe what you want to achieve. The AI will intelligently break it down into a structured goal with a timeline and actionable sub-tasks.
+          <DialogDescription className="text-xs text-[#52514D]">
+            Describe any high-level project or goal. The system will parse your request into a prioritized, multi-stage task tree.
           </DialogDescription>
         </DialogHeader>
 
-        <div className="grid gap-4 py-4">
-          <div className="grid gap-2">
-            <Label htmlFor="prompt">Your Ambition</Label>
+        <div className="space-y-4 py-2">
+          <div className="space-y-2">
+            <Label htmlFor="prompt" className="font-mono text-[10px] font-bold text-[#73726D] uppercase tracking-wider">
+              YOUR PROMPT / AMBITION
+            </Label>
             <Textarea
               id="prompt"
-              placeholder="e.g. I want to run a half marathon in 6 months, starting from zero."
+              placeholder="e.g. Build and launch a full-stack SaaS product MVP with user auth and billing in 4 weeks."
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
-              className="min-h-[120px]"
+              className="min-h-[120px] bg-[#FAF9F5] border-[#E8E6DF] text-sm text-[#141413] focus:border-[#141413] focus:ring-0 placeholder-[#A3A199] resize-none"
               disabled={loading}
             />
-            {error && <p className="text-sm text-red-500">{error}</p>}
+            {error && <p className="text-xs text-red-600 font-mono">{error}</p>}
           </div>
 
-          <div className="flex justify-end gap-2">
-            <Button variant="outline" onClick={onClose} disabled={loading}>
+          <div className="flex items-center justify-end gap-2 pt-2">
+            <Button
+              variant="outline"
+              onClick={onClose}
+              disabled={loading}
+              className="border-[#E8E6DF] text-xs font-semibold text-[#52514D] hover:bg-[#FAF9F5]"
+            >
               Cancel
             </Button>
-            <Button onClick={handleGenerate} disabled={!prompt.trim() || loading} className="bg-purple-600 hover:bg-purple-700 text-white">
+            <Button
+              onClick={handleGenerate}
+              disabled={!prompt.trim() || loading}
+              className="bg-[#141413] hover:bg-[#2A2927] text-[#FAF9F5] text-xs font-semibold px-4 py-2 rounded-md shadow-sm tactile-btn disabled:opacity-60"
+            >
               {loading ? (
-                <>
-                  <span className="animate-spin mr-2">⏳</span> Generating...
-                </>
+                <span className="font-mono text-xs">Parsing Task Tree...</span>
               ) : (
-                'Generate Goal'
+                <div className="flex items-center gap-1.5">
+                  <span>Decompose Goal</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </div>
               )}
             </Button>
           </div>

@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { AIGeneratorDialog } from '@/components/goals/AIGeneratorDialog';
 import { GoalCard } from '@/components/goals/GoalCard';
+import { Plus, Cpu } from 'lucide-react';
 
 export type Goal = {
   id: string;
@@ -43,7 +44,6 @@ export function GoalsSection() {
   };
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchGoals();
   }, []);
 
@@ -105,86 +105,68 @@ export function GoalsSection() {
 
   const tabs: TabType[] = ['All', 'Completed', 'In-Progress', 'Pending'];
 
-  const container = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: { staggerChildren: 0.1 }
-    }
-  };
-
-  const item = {
-    hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0, transition: { type: 'spring' as const, stiffness: 300, damping: 24 } }
-  };
-
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="pb-20">
-      {/* Top Controls Area */}
+    <div className="pb-20">
+      {/* Control Bar */}
       <div className="flex flex-col sm:flex-row items-center justify-between mb-8 gap-4">
-        {/* Custom Tabs */}
-        <div className="flex flex-wrap items-center gap-1 bg-white p-1.5 rounded-2xl shadow-sm border border-gray-100">
+        {/* Filter Tabs */}
+        <div className="flex items-center gap-1 bg-white p-1 rounded-lg border border-[#E8E6DF] shadow-sm">
           {tabs.map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`px-5 py-2 text-sm font-medium rounded-xl transition-all ${
+              className={`px-3.5 py-1.5 text-xs font-semibold rounded-md transition-all font-mono ${
                 activeTab === tab
-                  ? 'bg-gradient-to-r from-gray-900 to-gray-800 text-white shadow-md'
-                  : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'
+                  ? 'bg-[#141413] text-[#FAF9F5]'
+                  : 'text-[#73726D] hover:text-[#141413] hover:bg-[#FAF9F5]'
               }`}
             >
-              {tab === 'All' ? 'All Goals' : tab}
+              {tab.toUpperCase()}
             </button>
           ))}
         </div>
 
-        {/* Action Buttons */}
-        <div className="flex gap-3 w-full sm:w-auto">
-          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="w-full sm:w-auto">
-            <Button 
-              onClick={() => setIsAIDialogOpen(true)} 
-              className="w-full sm:w-auto bg-gradient-to-r from-violet-500 via-purple-500 to-fuchsia-500 hover:from-violet-600 hover:via-purple-600 hover:to-fuchsia-600 text-white shadow-lg shadow-purple-500/30 border-0 rounded-2xl h-12 px-6 font-semibold text-base"
-            >
-              <span className="mr-2 text-lg">✨</span> Generate with AI
-            </Button>
-          </motion.div>
-        </div>
+        {/* Generate Goal CTA */}
+        <button
+          onClick={() => setIsAIDialogOpen(true)}
+          className="w-full sm:w-auto bg-[#141413] hover:bg-[#2A2927] text-[#FAF9F5] text-xs font-semibold px-4 py-2.5 rounded-md transition-all flex items-center justify-center gap-2 shadow-sm tactile-btn"
+        >
+          <Cpu className="w-3.5 h-3.5" />
+          <span>Decompose Goal with AI</span>
+        </button>
       </div>
 
       {loading ? (
-        <div className="text-center py-16 text-gray-400 animate-pulse font-medium">Loading your goals...</div>
+        <div className="text-center py-20 font-mono text-xs text-[#73726D]">
+          QUERYING DATABASE GOALS...
+        </div>
       ) : filteredGoals.length === 0 ? (
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="text-center py-24 bg-white/50 rounded-[32px] border-2 border-dashed border-gray-200"
-        >
-          <p className="text-gray-500 mb-6 text-lg">No goals found for this category.</p>
-          <Button onClick={() => setIsAIDialogOpen(true)} variant="outline" className="rounded-xl h-11 border-gray-300 text-gray-700 hover:bg-gray-50">
-            Generate your first goal
+        <div className="text-center py-20 bg-white rounded-xl border border-dashed border-[#E8E6DF] p-8">
+          <p className="font-mono text-xs text-[#73726D] mb-4">NO GOALS FOUND IN THIS CATEGORY</p>
+          <Button
+            onClick={() => setIsAIDialogOpen(true)}
+            variant="outline"
+            className="rounded-md border-[#E8E6DF] text-xs font-semibold text-[#141413] hover:bg-[#FAF9F5]"
+          >
+            Create Your First Goal
           </Button>
-        </motion.div>
+        </div>
       ) : (
-        <motion.div 
-          variants={container}
-          initial="hidden"
-          animate="show"
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
-        >
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           <AnimatePresence>
             {filteredGoals.map((goal) => (
-              <motion.div key={goal.id} variants={item} layout>
+              <motion.div key={goal.id} layout>
                 <GoalCard
                   goal={goal}
                   onDelete={() => handleDeleteGoal(goal.id)}
                   onArchive={() => handleArchiveGoal(goal.id)}
                   onTogglePriority={() => handleTogglePriority(goal)}
                   onViewTasks={() => openTasksSheet(goal)}
-                /></motion.div>
+                />
+              </motion.div>
             ))}
           </AnimatePresence>
-        </motion.div>
+        </div>
       )}
 
       <AIGeneratorDialog
@@ -192,6 +174,6 @@ export function GoalsSection() {
         onClose={() => setIsAIDialogOpen(false)}
         onSuccess={fetchGoals}
       />
-    </motion.div>
+    </div>
   );
 }

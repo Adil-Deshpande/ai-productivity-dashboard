@@ -4,13 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Target, Mail, Lock, ArrowRight, Sparkles, CheckCircle2 } from 'lucide-react';
-
-const highlights = [
-  'AI-powered goal decomposition',
-  'Real-time progress tracking',
-  'Smart reminders & notes',
-];
+import { ArrowRight, Check, Command, ShieldCheck, Terminal } from 'lucide-react';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -50,150 +44,113 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex">
-      {/* Left panel — branding */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900 flex-col justify-between p-12 relative overflow-hidden">
-        {/* Glow orbs */}
-        <div className="absolute top-1/4 left-1/4 w-80 h-80 bg-indigo-600/20 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-violet-600/15 rounded-full blur-3xl pointer-events-none" />
-
-        {/* Logo */}
-        <div className="relative z-10 flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-indigo-400 to-violet-500 flex items-center justify-center shadow-lg shadow-indigo-500/40">
-            <Target className="w-5 h-5 text-white" strokeWidth={2.5} />
+    <div className="min-h-screen flex bg-[#FAF9F5] text-[#141413] font-sans">
+      {/* Left Column — Architectural Panel */}
+      <div className="hidden lg:flex lg:w-5/12 bg-[#141413] text-[#FAF9F5] flex-col justify-between p-12 border-r border-[#2A2927]">
+        <div className="flex items-center gap-3">
+          <div className="w-7 h-7 bg-white text-[#141413] rounded flex items-center justify-center font-mono font-bold text-xs">
+            GE
           </div>
-          <span className="text-white font-bold text-xl tracking-tight">Goal Engine</span>
+          <span className="font-bold text-sm tracking-tight text-white">GOAL ENGINE</span>
         </div>
 
-        {/* Hero text */}
-        <div className="relative z-10">
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <div className="inline-flex items-center gap-2 bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-semibold px-3 py-1.5 rounded-full mb-6">
-              <Sparkles className="w-3 h-3" />
-              AI-Powered Productivity
+        <div>
+          <span className="font-mono text-[11px] font-bold text-[#D97706] uppercase tracking-widest block mb-3">
+            AUTHENTICATION SYSTEM
+          </span>
+          <h2 className="text-3xl font-bold tracking-tight text-white mb-4 leading-snug">
+            Access your structured workspace.
+          </h2>
+          <p className="text-xs text-[#A3A29E] leading-relaxed mb-8 max-w-sm">
+            Stateless JWT authentication with secure HTTP-only cookies and complete user session isolation.
+          </p>
+
+          <div className="p-4 rounded-lg bg-[#1E1E1C] border border-[#2A2927] font-mono text-xs text-[#A3A29E] space-y-2">
+            <div className="flex items-center gap-2 text-emerald-400">
+              <Check className="w-3.5 h-3.5" />
+              <span>JWT Cookie Encryption Verified</span>
             </div>
-            <h2 className="text-4xl font-bold text-white leading-tight mb-4">
-              Welcome back to
-              <span className="block bg-gradient-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent">
-                your goals
-              </span>
-            </h2>
-            <p className="text-slate-400 text-base leading-relaxed mb-8">
-              Every great achievement starts with a clear plan. Sign in and keep moving forward.
-            </p>
-            <div className="space-y-3">
-              {highlights.map((item) => (
-                <div key={item} className="flex items-center gap-3">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
-                  <span className="text-slate-300 text-sm">{item}</span>
-                </div>
-              ))}
+            <div className="flex items-center gap-2 text-emerald-400">
+              <Check className="w-3.5 h-3.5" />
+              <span>PostgreSQL Connection Active</span>
             </div>
-          </motion.div>
+          </div>
         </div>
 
-        <p className="relative z-10 text-slate-600 text-xs">
-          © {new Date().getFullYear()} Goal Engine. All rights reserved.
-        </p>
+        <div className="font-mono text-[11px] text-[#73726D]">
+          SYSTEM ID // GE-AUTH-SECURE
+        </div>
       </div>
 
-      {/* Right panel — form */}
-      <div className="flex-1 flex items-center justify-center bg-slate-50 px-6 py-12">
+      {/* Right Column — Form */}
+      <div className="flex-1 flex items-center justify-center px-6 py-12">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          className="w-full max-w-md"
+          transition={{ duration: 0.4 }}
+          className="w-full max-w-sm"
         >
-          {/* Mobile logo */}
-          <div className="flex items-center gap-3 mb-8 lg:hidden">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-500 flex items-center justify-center">
-              <Target className="w-4.5 h-4.5 text-white" strokeWidth={2.5} />
-            </div>
-            <span className="text-gray-900 font-bold text-lg">Goal Engine</span>
-          </div>
-
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 tracking-tight mb-2">Sign in</h1>
-            <p className="text-gray-500">
-              Don&apos;t have an account?{' '}
-              <Link href="/register" className="text-indigo-600 font-semibold hover:text-indigo-700 transition-colors">
-                Sign up for free
+            <span className="font-mono text-[11px] font-bold text-[#73726D] uppercase tracking-widest block mb-1">
+              SIGN IN
+            </span>
+            <h1 className="text-2xl font-bold text-[#141413] tracking-tight mb-2">Welcome back</h1>
+            <p className="text-xs text-[#73726D]">
+              New to Goal Engine?{' '}
+              <Link href="/register" className="font-semibold text-[#141413] underline underline-offset-4 hover:text-[#73726D] transition-colors">
+                Create an account
               </Link>
             </p>
           </div>
 
           {error && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.97 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="mb-6 flex items-center gap-3 bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-xl"
-            >
-              <span className="w-2 h-2 bg-red-500 rounded-full flex-shrink-0" />
+            <div className="mb-6 p-3 rounded bg-red-50 border border-red-200 text-red-800 text-xs font-medium">
               {error}
-            </motion.div>
+            </div>
           )}
 
-          <form onSubmit={handleLogin} className="space-y-5">
-            {/* Email */}
+          <form onSubmit={handleLogin} className="space-y-4">
             <div>
-              <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-2">
-                Email address
+              <label htmlFor="email" className="block text-xs font-bold text-[#141413] uppercase tracking-wider mb-1.5">
+                Email Address
               </label>
-              <div className="relative">
-                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-                <input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  placeholder="you@example.com"
-                  className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-400 transition-all"
-                />
-              </div>
+              <input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                placeholder="name@example.com"
+                className="w-full px-3.5 py-2.5 bg-white border border-[#E8E6DF] rounded-md text-sm text-[#141413] placeholder-[#A3A199] focus:outline-none focus:border-[#141413] transition-colors"
+              />
             </div>
 
-            {/* Password */}
             <div>
-              <label htmlFor="password" className="block text-sm font-semibold text-gray-700 mb-2">
+              <label htmlFor="password" className="block text-xs font-bold text-[#141413] uppercase tracking-wider mb-1.5">
                 Password
               </label>
-              <div className="relative">
-                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-                <input
-                  id="password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  placeholder="Your password"
-                  className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-400 transition-all"
-                />
-              </div>
+              <input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                placeholder="••••••••"
+                className="w-full px-3.5 py-2.5 bg-white border border-[#E8E6DF] rounded-md text-sm text-[#141413] placeholder-[#A3A199] focus:outline-none focus:border-[#141413] transition-colors"
+              />
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="group w-full flex items-center justify-center gap-2 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-semibold py-3.5 rounded-xl text-sm transition-all shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:-translate-y-0.5 disabled:opacity-60 disabled:cursor-not-allowed disabled:transform-none"
+              className="w-full bg-[#141413] hover:bg-[#2A2927] text-[#FAF9F5] text-xs font-semibold py-3 rounded-md transition-all flex items-center justify-center gap-2 shadow-sm tactile-btn disabled:opacity-60"
             >
               {loading ? (
-                <>
-                  <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                  </svg>
-                  Signing you in...
-                </>
+                <span>Authenticating...</span>
               ) : (
                 <>
-                  Sign in
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+                  <span>Sign In</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
                 </>
               )}
             </button>

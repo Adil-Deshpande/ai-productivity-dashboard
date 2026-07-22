@@ -13,103 +13,95 @@ type GoalCardProps = {
 };
 
 export function GoalCard({ goal, onViewTasks, onDelete, onArchive, onTogglePriority }: GoalCardProps) {
-  // Determine color based on status/priority
   const isCompleted = goal.status === 'COMPLETED';
   const isImportant = goal.priority === 'HIGH';
-  
-  const ringColor = isCompleted 
-    ? 'border-emerald-500' 
-    : goal.status === 'IN_PROGRESS' 
-      ? 'border-blue-500' 
-      : 'border-rose-500';
-
-  const dotColor = isCompleted 
-    ? 'bg-emerald-500' 
-    : goal.status === 'IN_PROGRESS' 
-      ? 'bg-blue-500' 
-      : 'bg-rose-500';
-
-  const bgGradient = isCompleted 
-    ? 'bg-gradient-to-br from-emerald-50/50 to-white border-emerald-100' 
-    : goal.status === 'IN_PROGRESS'
-      ? 'bg-gradient-to-br from-blue-50/50 to-white border-blue-100'
-      : 'bg-gradient-to-br from-rose-50/50 to-white border-rose-100';
 
   return (
     <motion.div 
-      whileHover={{ y: -4, scale: 1.01 }}
-      className={`rounded-[24px] p-6 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.03)] border flex flex-col h-full transition-shadow hover:shadow-[0_8px_30px_-4px_rgba(0,0,0,0.08)] ${bgGradient}`}
+      whileHover={{ y: -2 }}
+      className="bg-white border border-[#E8E6DF] rounded-xl p-5 shadow-sm flex flex-col h-full hover:border-[#141413]/30 transition-all"
     >
       {/* Header Area */}
-      <div className="flex items-start justify-between mb-3">
-        <h3 className="font-semibold text-gray-900 text-lg leading-tight pr-4">
+      <div className="flex items-start justify-between gap-3 mb-3">
+        <h3 className="font-bold text-[#141413] text-base leading-snug">
           {goal.title}
         </h3>
-        {/* Status Ring */}
-        <div className={`w-5 h-5 rounded-full border-2 ${ringColor} flex items-center justify-center flex-shrink-0 mt-1 shadow-sm`}>
-           <motion.div 
-             initial={false}
-             animate={{ scale: isCompleted ? [1, 1.5, 1] : 1 }}
-             transition={{ duration: 0.3 }}
-             className={`w-2 h-2 rounded-full ${dotColor}`} 
-           />
-        </div>
+        
+        {/* Status Tag */}
+        <span
+          className={`font-mono text-[9px] font-bold px-2 py-0.5 rounded border flex-shrink-0 uppercase tracking-wider ${
+            isCompleted
+              ? 'bg-[#ECFDF5] text-[#059669] border-[#A7F3D0]'
+              : goal.status === 'IN_PROGRESS'
+              ? 'bg-[#EFF6FF] text-[#2563EB] border-[#BFDBFE]'
+              : 'bg-[#FAF9F5] text-[#73726D] border-[#E8E6DF]'
+          }`}
+        >
+          {goal.status}
+        </span>
       </div>
 
-      {/* Meta info (Target Date / AI) */}
-      <div className="flex items-center justify-between mb-4">
-        <span className="text-xs font-medium text-gray-400 bg-white/60 px-2 py-1 rounded-md shadow-sm border border-gray-50">
-          {goal.targetDate ? `Due ${format(new Date(goal.targetDate), 'MMM d, yyyy')}` : 'No due date'}
+      {/* Meta Info Bar */}
+      <div className="flex items-center justify-between mb-3 text-xs text-[#73726D]">
+        <span className="font-mono text-[10px]">
+          {goal.targetDate ? `DUE: ${format(new Date(goal.targetDate), 'MMM d, yyyy')}` : 'NO DEADLINE'}
         </span>
+
         <div className="flex items-center gap-1">
           {onTogglePriority && (
             <button 
               onClick={(e) => { e.stopPropagation(); onTogglePriority(); }} 
-              className={`transition-colors p-1.5 rounded-full ${isImportant ? 'text-amber-500 bg-amber-50' : 'text-gray-300 hover:text-amber-500 hover:bg-amber-50/80'}`}
+              className={`p-1 rounded transition-colors ${isImportant ? 'text-[#D97706] bg-[#FEF3C7]' : 'text-[#A3A199] hover:text-[#D97706] hover:bg-[#FAF9F5]'}`}
               title={isImportant ? "Remove Important" : "Mark as Important"}
             >
-              <Star className="w-4 h-4" fill={isImportant ? "currentColor" : "none"} />
+              <Star className="w-3.5 h-3.5" fill={isImportant ? "currentColor" : "none"} />
             </button>
           )}
           {onArchive && (
-            <button onClick={(e) => { e.stopPropagation(); onArchive(); }} className="text-gray-300 hover:text-amber-500 transition-colors p-1.5 rounded-full hover:bg-amber-50/80">
-              <Archive className="w-4 h-4" />
+            <button
+              onClick={(e) => { e.stopPropagation(); onArchive(); }}
+              className="p-1 text-[#A3A199] hover:text-[#141413] hover:bg-[#FAF9F5] rounded transition-colors"
+              title="Archive Goal"
+            >
+              <Archive className="w-3.5 h-3.5" />
             </button>
           )}
-          <button onClick={(e) => { e.stopPropagation(); onDelete(); }} className="text-gray-300 hover:text-red-500 transition-colors p-1.5 rounded-full hover:bg-red-50/80">
-            <Trash2 className="w-4 h-4" />
+          <button
+            onClick={(e) => { e.stopPropagation(); onDelete(); }}
+            className="p-1 text-[#A3A199] hover:text-[#DC2626] hover:bg-red-50 rounded transition-colors"
+            title="Delete Goal"
+          >
+            <Trash2 className="w-3.5 h-3.5" />
           </button>
         </div>
       </div>
 
       {/* Description */}
-      <p className="text-sm text-gray-500 mb-8 leading-relaxed line-clamp-3 flex-1">
-        {goal.description || 'No description provided for this goal.'}
+      <p className="text-xs text-[#52514D] mb-6 leading-relaxed line-clamp-3 flex-1">
+        {goal.description || 'No detailed description provided.'}
       </p>
 
       {/* Action Button */}
-      <motion.div whileTap={{ scale: 0.97 }}>
-        <Button 
-          onClick={onViewTasks}
-          className={`w-full rounded-xl h-11 font-medium transition-all shadow-sm ${
-            isCompleted 
-              ? 'bg-emerald-500 hover:bg-emerald-600 text-white border-transparent' 
-              : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50 hover:text-gray-900 shadow-sm'
-          }`}
-        >
-          {isCompleted ? (
-            <>
-              <CheckCircle2 className="w-4 h-4 mr-2 text-white" />
-              Completed
-            </>
-          ) : (
-            <>
-              View Tasks
-              <ArrowRight className="w-4 h-4 ml-2 text-gray-400" />
-            </>
-          )}
-        </Button>
-      </motion.div>
+      <Button 
+        onClick={onViewTasks}
+        className={`w-full rounded-md h-9 text-xs font-semibold transition-all shadow-none ${
+          isCompleted 
+            ? 'bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0] hover:bg-[#D1FAE5]' 
+            : 'bg-[#141413] text-[#FAF9F5] hover:bg-[#2A2927] tactile-btn'
+        }`}
+      >
+        {isCompleted ? (
+          <>
+            <CheckCircle2 className="w-3.5 h-3.5 mr-1.5" />
+            Completed
+          </>
+        ) : (
+          <>
+            <span>View Task Tree</span>
+            <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
+          </>
+        )}
+      </Button>
     </motion.div>
   );
 }

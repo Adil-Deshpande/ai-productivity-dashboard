@@ -4,26 +4,17 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { GoalsSection } from '@/components/goals/GoalsSection';
-import { Target, CheckCircle2, Clock, Zap } from 'lucide-react';
+import { Target, CheckCircle2, Clock, Activity } from 'lucide-react';
 
 type User = { name?: string; email: string };
 type Goal = { id: string; status: string; isArchived: boolean };
 
 function getGreeting(name?: string): string {
   const hour = new Date().getHours();
-  const firstName = name?.split(' ')[0] || 'there';
-  if (hour < 12) return `Good morning, ${firstName}! ☀️`;
-  if (hour < 17) return `Good afternoon, ${firstName}! 👋`;
-  return `Good evening, ${firstName}! 🌙`;
-}
-
-function getMotivationalSubtitle(completed: number, total: number): string {
-  if (total === 0) return "Generate your first goal with AI to get started.";
-  if (completed === total && total > 0) return "You've completed everything! Time to set new goals. 🚀";
-  const pct = Math.round((completed / total) * 100);
-  if (pct >= 75) return "Almost there! You're crushing it today.";
-  if (pct >= 50) return "Halfway through — keep the momentum going!";
-  return "Every goal you complete is progress. Let's get to work.";
+  const firstName = name?.split(' ')[0] || 'User';
+  if (hour < 12) return `Good morning, ${firstName}`;
+  if (hour < 17) return `Good afternoon, ${firstName}`;
+  return `Good evening, ${firstName}`;
 }
 
 export default function Dashboard() {
@@ -50,13 +41,9 @@ export default function Dashboard() {
 
   if (!user) {
     return (
-      <div className="p-10 flex items-center justify-center min-h-screen">
-        <div className="flex items-center gap-3 text-gray-400">
-          <svg className="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
-            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-          </svg>
-          <span className="text-sm font-medium">Loading your dashboard...</span>
+      <div className="p-8 flex items-center justify-center min-h-screen">
+        <div className="flex items-center gap-3 text-[#73726D] font-mono text-xs">
+          <span>LOADING WORKSPACE...</span>
         </div>
       </div>
     );
@@ -68,96 +55,85 @@ export default function Dashboard() {
 
   const stats = [
     {
-      label: 'Total Goals',
+      label: 'TOTAL GOALS',
       value: activeGoals.length,
       icon: Target,
-      color: 'text-indigo-600',
-      bg: 'bg-indigo-50',
-      border: 'border-indigo-100',
+      tag: 'ACTIVE',
     },
     {
-      label: 'Completed',
+      label: 'COMPLETED',
       value: completedGoals.length,
       icon: CheckCircle2,
-      color: 'text-emerald-600',
-      bg: 'bg-emerald-50',
-      border: 'border-emerald-100',
+      tag: '100% DONE',
     },
     {
-      label: 'In Progress',
+      label: 'IN PROGRESS',
       value: inProgressGoals.length,
       icon: Clock,
-      color: 'text-amber-600',
-      bg: 'bg-amber-50',
-      border: 'border-amber-100',
+      tag: 'ACTIVE TREE',
     },
     {
-      label: 'Completion Rate',
+      label: 'COMPLETION RATE',
       value: activeGoals.length > 0
         ? `${Math.round((completedGoals.length / activeGoals.length) * 100)}%`
-        : '—',
-      icon: Zap,
-      color: 'text-violet-600',
-      bg: 'bg-violet-50',
-      border: 'border-violet-100',
+        : '0%',
+      icon: Activity,
+      tag: 'METRIC',
     },
   ];
 
   return (
-    <div className="p-8 max-w-7xl mx-auto w-full">
+    <div className="p-8 max-w-6xl mx-auto w-full">
       {/* Header */}
       <motion.div
-        initial={{ opacity: 0, y: -16 }}
+        initial={{ opacity: 0, y: -12 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-        className="mb-8"
+        transition={{ duration: 0.3 }}
+        className="mb-8 pb-6 border-b border-[#E8E6DF] flex flex-col sm:flex-row sm:items-center justify-between gap-4"
       >
-        <h1 className="text-3xl font-bold text-gray-900 tracking-tight mb-1">
-          {getGreeting(user.name)}
-        </h1>
-        <p className="text-gray-500 text-base">
-          {getMotivationalSubtitle(completedGoals.length, activeGoals.length)}
-        </p>
+        <div>
+          <span className="font-mono text-[10px] font-bold text-[#73726D] uppercase tracking-widest block mb-1">
+            WORKSPACE OVERVIEW
+          </span>
+          <h1 className="text-2xl font-bold text-[#141413] tracking-tight">
+            {getGreeting(user.name)}
+          </h1>
+        </div>
+
+        <div className="font-mono text-xs text-[#73726D] bg-[#F2F1EC] px-3 py-1.5 rounded border border-[#E8E6DF] self-start sm:self-auto">
+          SYSTEM STATUS: ONLINE
+        </div>
       </motion.div>
 
       {/* Stats bar */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+        transition={{ duration: 0.4, delay: 0.1 }}
         className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-10"
       >
         {stats.map((stat, i) => {
           const Icon = stat.icon;
           return (
-            <motion.div
+            <div
               key={stat.label}
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.12 + i * 0.06 }}
-              className={`bg-white rounded-2xl border ${stat.border} p-5 flex items-center gap-4 shadow-sm hover:shadow-md transition-shadow`}
+              className="bg-white rounded-lg border border-[#E8E6DF] p-4 flex flex-col justify-between"
             >
-              <div className={`w-10 h-10 rounded-xl ${stat.bg} flex items-center justify-center flex-shrink-0`}>
-                <Icon className={`w-5 h-5 ${stat.color}`} strokeWidth={2} />
+              <div className="flex items-center justify-between mb-3">
+                <span className="font-mono text-[10px] font-bold text-[#73726D] tracking-wider">
+                  {stat.label}
+                </span>
+                <Icon className="w-4 h-4 text-[#141413]" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-gray-900 leading-none mb-1">{stat.value}</p>
-                <p className="text-xs text-gray-400 font-medium">{stat.label}</p>
+                <p className="text-2xl font-bold text-[#141413] font-mono leading-none mb-1">{stat.value}</p>
+                <span className="font-mono text-[9px] text-[#52514D] bg-[#FAF9F5] border border-[#E8E6DF] px-1.5 py-0.5 rounded">
+                  {stat.tag}
+                </span>
               </div>
-            </motion.div>
+            </div>
           );
         })}
-      </motion.div>
-
-      {/* Section label */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.3 }}
-        className="flex items-center gap-3 mb-6"
-      >
-        <h2 className="text-lg font-bold text-gray-900">Your Goals</h2>
-        <div className="h-px flex-1 bg-gray-100" />
       </motion.div>
 
       <GoalsSection />

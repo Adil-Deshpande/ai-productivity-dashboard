@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CheckCircle2, Circle, Trash2, ArrowLeft, Calendar, Flag, AlignLeft } from 'lucide-react';
+import { Check, Trash2, ArrowLeft, Calendar, Flag, AlignLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { format } from 'date-fns';
 
@@ -37,15 +37,13 @@ export default function GoalTasksPage() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      // Fetch Goal
       const goalRes = await fetch(`/api/goals/${id}`, { cache: 'no-store' });
       if (goalRes.ok) {
         const goalData = await goalRes.json();
         setGoal(goalData);
       }
 
-      // Fetch Tasks
-      const tasksRes = await fetch(`/api/goals/${id}/tasks`);
+      const tasksRes = await fetch(`/api/goals/${id}/tasks`, { cache: 'no-store' });
       if (tasksRes.ok) {
         const tasksData = await tasksRes.json();
         setTasks(tasksData);
@@ -59,16 +57,13 @@ export default function GoalTasksPage() {
 
   useEffect(() => {
     if (id) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       fetchData();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const toggleTaskStatus = async (task: Task) => {
     const newStatus = task.status === 'COMPLETED' ? 'PENDING' : 'COMPLETED';
-    
-    // Optimistic update
+
     setTasks(tasks.map(t => t.id === task.id ? { ...t, status: newStatus } : t));
 
     try {
@@ -79,7 +74,7 @@ export default function GoalTasksPage() {
       });
     } catch (err) {
       console.error('Failed to toggle status:', err);
-      fetchData(); // Revert on error
+      fetchData();
     }
   };
 
@@ -92,167 +87,146 @@ export default function GoalTasksPage() {
     }
   };
 
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case 'HIGH': return 'text-red-500 bg-red-50';
-      case 'MEDIUM': return 'text-yellow-600 bg-yellow-50';
-      case 'LOW': return 'text-blue-500 bg-blue-50';
-      default: return 'text-gray-500 bg-gray-50';
-    }
-  };
+  const completedCount = tasks.filter(t => t.status === 'COMPLETED').length;
+  const progressPct = tasks.length > 0 ? Math.round((completedCount / tasks.length) * 100) : 0;
 
   if (loading) {
     return (
-      <div className="p-10 max-w-4xl mx-auto w-full text-center py-20 text-gray-500">
-        Loading tasks...
+      <div className="p-8 max-w-4xl mx-auto w-full font-mono text-xs text-[#73726D] py-20 text-center">
+        FETCHING TASK TREE...
       </div>
     );
   }
 
   if (!goal) {
     return (
-      <div className="p-10 max-w-4xl mx-auto w-full text-center py-20 text-gray-500">
-        Goal not found.
-        <br/>
-        <Button variant="link" onClick={() => router.push('/dashboard')}>Return to Dashboard</Button>
+      <div className="p-8 max-w-4xl mx-auto w-full text-center py-20">
+        <p className="font-mono text-xs text-[#73726D] mb-4">GOAL NOT FOUND</p>
+        <Button
+          onClick={() => router.push('/dashboard')}
+          className="bg-[#141413] text-[#FAF9F5] text-xs font-semibold"
+        >
+          Return to Dashboard
+        </Button>
       </div>
     );
   }
 
-  const container = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: { staggerChildren: 0.1 }
-    }
-  };
-
-  const item = {
-    hidden: { opacity: 0, x: -20 },
-    show: { opacity: 1, x: 0, transition: { type: 'spring' as const, stiffness: 300, damping: 24 } }
-  };
-
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-10 max-w-4xl mx-auto w-full pb-24">
-      {/* Header */}
-      <div className="mb-10">
-        <button 
-          onClick={() => { router.refresh(); router.push('/dashboard'); }} 
-          className="flex items-center text-sm font-medium text-gray-400 hover:text-gray-700 transition-colors mb-6"
-        >
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Back to Dashboard
-        </button>
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-8 max-w-4xl mx-auto w-full pb-24">
+      {/* Back button */}
+      <button 
+        onClick={() => { router.refresh(); router.push('/dashboard'); }} 
+        className="inline-flex items-center text-xs font-semibold text-[#73726D] hover:text-[#141413] transition-colors mb-6"
+      >
+        <ArrowLeft className="w-3.5 h-3.5 mr-1.5" />
+        Back to Dashboard
+      </button>
 
-        <div className="flex items-center gap-3 mb-2">
-          <h1 className="text-4xl font-bold text-gray-900 tracking-tight">To Do List</h1>
-          <div className="text-3xl">📝</div>
+      {/* Header Panel */}
+      <div className="bg-white border border-[#E8E6DF] rounded-xl p-6 mb-8 shadow-sm">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4 pb-4 border-b border-[#E8E6DF]">
+          <div>
+            <span className="font-mono text-[10px] font-bold text-[#73726D] uppercase tracking-widest block mb-1">
+              EXECUTION TREE
+            </span>
+            <h1 className="text-2xl font-bold text-[#141413] tracking-tight">{goal.title}</h1>
+          </div>
+
+          <div className="flex items-center gap-3 font-mono text-xs">
+            <span className="text-[#73726D]">{completedCount}/{tasks.length} DONE</span>
+            <div className="w-24 h-2 bg-[#F2F1EC] rounded-full overflow-hidden border border-[#E8E6DF]">
+              <div
+                className="h-full bg-[#141413] transition-all duration-500"
+                style={{ width: `${progressPct}%` }}
+              />
+            </div>
+            <span className="font-bold text-[#141413]">{progressPct}%</span>
+          </div>
         </div>
-        <p className="text-lg text-gray-500">{goal.title}</p>
-        {goal.description && <p className="text-sm text-gray-400 mt-2 max-w-2xl">{goal.description}</p>}
+
+        {goal.description && (
+          <p className="text-xs text-[#52514D] leading-relaxed max-w-2xl">{goal.description}</p>
+        )}
       </div>
 
       {/* Task List */}
       {tasks.length === 0 ? (
-        <div className="text-center py-20 bg-white/50 rounded-3xl border border-gray-100 border-dashed">
-          <p className="text-gray-500 italic">No tasks found for this goal.</p>
+        <div className="text-center py-16 bg-white rounded-xl border border-dashed border-[#E8E6DF] p-8">
+          <p className="font-mono text-xs text-[#73726D]">NO TASKS GENERATED FOR THIS GOAL</p>
         </div>
       ) : (
-        <motion.div 
-          variants={container}
-          initial="hidden"
-          animate="show"
-          className="space-y-4"
-        >
+        <div className="space-y-3">
           <AnimatePresence>
-            {tasks.map(task => {
+            {tasks.map((task, index) => {
               const isCompleted = task.status === 'COMPLETED';
               return (
                 <motion.div 
                   layout
-                  variants={item}
-                  initial="hidden"
-                  animate="show"
-                  exit={{ opacity: 0, scale: 0.95 }}
                   key={task.id} 
-                  className={`p-5 rounded-[24px] transition-all duration-500 flex items-start gap-4 ${
-                    isCompleted ? 'bg-emerald-50/40 border-emerald-100/50 shadow-inner' : 'bg-white shadow-[0_4px_20px_-4px_rgba(0,0,0,0.03)] border-gray-100/60 hover:shadow-md'
+                  className={`p-4 rounded-lg border transition-all flex items-start gap-3.5 ${
+                    isCompleted
+                      ? 'bg-[#FAF9F5] border-[#E8E6DF] opacity-75'
+                      : 'bg-white border-[#E8E6DF] hover:border-[#141413]/30 shadow-sm'
                   }`}
                 >
-                  {/* Checkbox */}
-                  <motion.button 
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
+                  {/* Custom Checkbox */}
+                  <button 
                     onClick={() => toggleTaskStatus(task)}
-                    className={`flex-shrink-0 mt-0.5 transition-colors duration-300 ${
-                      isCompleted ? 'text-emerald-500' : 'text-gray-300 hover:text-emerald-400'
+                    className={`flex-shrink-0 w-4 h-4 rounded border mt-0.5 flex items-center justify-center transition-colors ${
+                      isCompleted 
+                        ? 'bg-[#141413] border-[#141413] text-white' 
+                        : 'border-[#D1CEC4] hover:border-[#141413]'
                     }`}
                   >
-                    {isCompleted ? (
-                      <motion.div initial={{ scale: 0.5, rotate: -45 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: 'spring' as const, stiffness: 400, damping: 15 }}>
-                        <CheckCircle2 className="w-6 h-6" />
-                      </motion.div>
-                    ) : (
-                      <Circle className="w-6 h-6" />
-                    )}
-                  </motion.button>
+                    {isCompleted && <Check className="w-3 h-3 stroke-[3]" />}
+                  </button>
                   
-                  {/* Content */}
+                  {/* Task Content */}
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-start justify-between gap-4">
-                      <h3 className={`font-semibold text-lg transition-all duration-500 ${
-                        isCompleted ? 'text-gray-400 line-through decoration-emerald-200' : 'text-gray-900'
+                    <div className="flex items-start justify-between gap-3">
+                      <h3 className={`font-semibold text-sm transition-all ${
+                        isCompleted ? 'text-[#73726D] line-through' : 'text-[#141413]'
                       }`}>
                         {task.title}
                       </h3>
                       
-                      {/* Delete button */}
                       <button 
                         onClick={() => handleDelete(task.id)}
-                        className="flex-shrink-0 p-1.5 text-gray-300 hover:text-rose-500 hover:bg-rose-50 rounded-full transition-colors"
+                        className="p-1 text-[#A3A199] hover:text-[#DC2626] hover:bg-red-50 rounded transition-colors"
+                        title="Delete task"
                       >
-                        <Trash2 className="w-4 h-4" />
+                        <Trash2 className="w-3.5 h-3.5" />
                       </button>
                     </div>
 
-                    {/* Expanded Details */}
-                    <AnimatePresence>
-                      {!isCompleted && (
-                        <motion.div 
-                          initial={{ opacity: 0, height: 0 }}
-                          animate={{ opacity: 1, height: 'auto' }}
-                          exit={{ opacity: 0, height: 0 }}
-                          className="mt-3 space-y-2 overflow-hidden"
-                        >
-                          {task.description && (
-                            <div className="flex items-start gap-2 text-sm text-gray-500">
-                              <AlignLeft className="w-4 h-4 flex-shrink-0 mt-0.5 text-gray-400" />
-                              <p className="leading-relaxed">{task.description}</p>
-                            </div>
-                          )}
-                          
-                          <div className="flex items-center gap-4 mt-3">
-                            <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium ${getPriorityColor(task.priority)}`}>
-                              <Flag className="w-3 h-3" />
-                              {task.priority}
-                            </div>
-                            
-                            {task.targetDate && (
-                              <div className="flex items-center gap-1.5 text-xs font-medium text-gray-500 bg-gray-50 px-2.5 py-1 rounded-md">
-                                <Calendar className="w-3 h-3 text-gray-400" />
-                                {format(new Date(task.targetDate), 'MMM d, yyyy')}
-                              </div>
-                            )}
-                          </div>
-                        </motion.div>
+                    {task.description && !isCompleted && (
+                      <p className="text-xs text-[#52514D] leading-relaxed mt-1.5">{task.description}</p>
+                    )}
+
+                    <div className="flex items-center gap-3 mt-3 font-mono text-[10px]">
+                      <span className={`px-2 py-0.5 rounded font-bold uppercase ${
+                        task.priority === 'HIGH'
+                          ? 'bg-[#FEF2F2] text-[#991B1B] border border-[#FCA5A5]'
+                          : task.priority === 'MEDIUM'
+                          ? 'bg-[#FFFBEB] text-[#92400E] border border-[#FDE68A]'
+                          : 'bg-[#F0FDF4] text-[#166534] border border-[#86EFAC]'
+                      }`}>
+                        {task.priority}
+                      </span>
+
+                      {task.targetDate && (
+                        <span className="text-[#73726D] bg-[#F2F1EC] px-2 py-0.5 rounded border border-[#E8E6DF]">
+                          DUE: {format(new Date(task.targetDate), 'MMM d, yyyy')}
+                        </span>
                       )}
-                    </AnimatePresence>
+                    </div>
                   </div>
                 </motion.div>
               );
             })}
           </AnimatePresence>
-        </motion.div>
+        </div>
       )}
     </motion.div>
   );
