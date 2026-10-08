@@ -44,8 +44,36 @@ export function GoalsSection() {
   };
 
   useEffect(() => {
-    fetchGoals();
-  }, []);
+  let ignore = false;
+
+  const loadGoals = async () => {
+    try {
+      const res = await fetch('/api/goals', { cache: 'no-store' });
+
+      if (res.ok) {
+        const data = await res.json();
+
+        if (!ignore) {
+          setGoals(data);
+        }
+      }
+    } catch (error) {
+      if (!ignore) {
+        console.error('Failed to fetch goals:', error);
+      }
+    } finally {
+      if (!ignore) {
+        setLoading(false);
+      }
+    }
+  };
+
+  loadGoals();
+
+  return () => {
+    ignore = true;
+  };
+}, []);
 
   const handleDeleteGoal = async (id: string) => {
     if (!confirm('Are you sure you want to delete this goal?')) return;

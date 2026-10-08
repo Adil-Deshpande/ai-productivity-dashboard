@@ -35,7 +35,6 @@ export default function GoalTasksPage() {
   const [loading, setLoading] = useState(true);
 
   const fetchData = async () => {
-    setLoading(true);
     try {
       const goalRes = await fetch(`/api/goals/${id}`, { cache: 'no-store' });
       if (goalRes.ok) {
@@ -54,13 +53,47 @@ export default function GoalTasksPage() {
       setLoading(false);
     }
   };
+	useEffect(() => {
+  if (!id) return;
 
-  useEffect(() => {
-    if (id) {
-      fetchData();
-    }
-  }, [id]);
+  let ignore = false;
 
+  Promise.all([
+    fetch(`/api/goals/${id}`, { cache: 'no-store' }),
+    fetch(`/api/goals/${id}/tasks`, { cache: 'no-store' }),
+  ])
+    .then(async ([goalRes, tasksRes]) => {
+      if (ignore) return;
+
+      if (goalRes.ok) {
+        const goalData = await goalRes.json();
+        if (!ignore) {
+          setGoal(goalData);
+        }
+      }
+
+      if (tasksRes.ok) {
+        const tasksData = await tasksRes.json();
+        if (!ignore) {
+          setTasks(tasksData);
+        }
+      }
+    })
+    .catch((err) => {
+      if (!ignore) {
+        console.error('Failed to fetch data:', err);
+      }
+    })
+    .finally(() => {
+      if (!ignore) {
+        setLoading(false);
+      }
+    });
+
+  return () => {
+    ignore = true;
+  };
+}, [id]);
   const toggleTaskStatus = async (task: Task) => {
     const newStatus = task.status === 'COMPLETED' ? 'PENDING' : 'COMPLETED';
 

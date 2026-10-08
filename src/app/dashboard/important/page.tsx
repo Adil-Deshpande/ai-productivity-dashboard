@@ -89,7 +89,7 @@ export default function ImportantPage() {
       ) : goals.length === 0 ? (
         <div className="text-center py-20 bg-white/50 rounded-3xl border border-gray-100 border-dashed">
           <AlertTriangle className="w-12 h-12 text-rose-200 mx-auto mb-4" />
-          <p className="text-gray-500 italic">No important goals right now. You're all caught up!</p>
+          <p className="text-gray-500 italic">No important goals right now. You&apos;re all caught up!</p>
         </div>
       ) : (
         <motion.div 
