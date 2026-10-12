@@ -38,3 +38,7 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 ## CI/CD Automation
 
 Jenkins monitors the `cie-devops` branch, runs lint and build checks, builds a Docker image, and deploys the application to Kubernetes on Minikube.
+
+## Deployment Verification
+
+The application is deployed to Kubernetes through the Jenkins CI/CD pipeline and monitored using Prometheus and Grafana.
