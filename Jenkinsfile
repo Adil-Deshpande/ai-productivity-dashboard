@@ -51,6 +51,8 @@ pipeline {
                     kubectl rollout status deployment/postgres --timeout=180s
 
                     kubectl rollout status deployment/ai-productivity-dashboard --timeout=180s
+
+		    kubectl apply -f k8s-monitoring.yaml
                 '''
             }
         }
